@@ -1,11 +1,13 @@
 package games.jaipurskeleton;
 
+import com.google.common.collect.ImmutableMap;
 import core.AbstractGameState;
 import core.CoreConstants;
 import core.StandardForwardModel;
 import core.actions.AbstractAction;
 import core.components.Counter;
 import core.components.Deck;
+import games.jaipurskeleton.actions.SellCards;
 import games.jaipurskeleton.actions.TakeCards;
 import games.jaipurskeleton.components.JaipurCard;
 import games.jaipurskeleton.components.JaipurToken;
@@ -38,7 +40,7 @@ public class JaipurForwardModel extends StandardForwardModel {
 
         // Initialize variables
         gs.market = new HashMap<>();
-        for (JaipurCard.GoodType gt: JaipurCard.GoodType.values()) {
+        for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
             // 5 cards in the market
             gs.market.put(gt, new Counter(0, 0, 5, "Market: " + gt));
         }
@@ -65,7 +67,7 @@ public class JaipurForwardModel extends StandardForwardModel {
             gs.playerHerds.add(new Counter(0, 0, 11, "Player " + i + " herd"));
 
             Map<JaipurCard.GoodType, Counter> playerHand = new HashMap<>();
-            for (JaipurCard.GoodType gt: JaipurCard.GoodType.values()) {
+            for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
                 if (gt != JaipurCard.GoodType.Camel) {
                     // Hand limit of 7
                     playerHand.put(gt, new Counter(0, 0, 7, "Player " + i + " hand: " + gt));
@@ -83,7 +85,7 @@ public class JaipurForwardModel extends StandardForwardModel {
 
         // Market initialisation
         // Place 3 camel cards in the market
-        for (JaipurCard.GoodType gt: JaipurCard.GoodType.values()) {
+        for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
             if (gt == JaipurCard.GoodType.Camel) {
                 gs.market.get(gt).setValue(3);
             } else {
@@ -129,7 +131,7 @@ public class JaipurForwardModel extends StandardForwardModel {
 
             // First, reset
             gs.playerHerds.get(i).setValue(0);
-            for (JaipurCard.GoodType gt: JaipurCard.GoodType.values()) {
+            for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
                 if (gt != JaipurCard.GoodType.Camel) {
                     playerHand.get(gt).setValue(0);
                 }
@@ -213,10 +215,10 @@ public class JaipurForwardModel extends StandardForwardModel {
         gs.goodTokens.put(Leather, tokenDeck6);
 
         // Initialize the bonus tokens
-        for (int nSold: jp.bonusTokensAvailable.keySet()) {
+        for (int nSold : jp.bonusTokensAvailable.keySet()) {
             Integer[] values = jp.bonusTokensAvailable.get(nSold);
             Deck<JaipurToken> tokenDeck = new Deck<>("Bonus tokens " + nSold, CoreConstants.VisibilityMode.HIDDEN_TO_ALL);
-            for (int v: values) {
+            for (int v : values) {
                 tokenDeck.add(new JaipurToken(v));
             }
             // Shuffle
@@ -237,6 +239,7 @@ public class JaipurForwardModel extends StandardForwardModel {
 
     /**
      * Calculates the list of currently available actions, possibly depending on the game phase.
+     *
      * @return - List of AbstractAction objects.
      */
     @Override
@@ -249,13 +252,26 @@ public class JaipurForwardModel extends StandardForwardModel {
 
         // Can sell cards from hand
         // TODO: Follow lab 1 instructions (Section 3.1) to fill in this method here.
+        for (JaipurCard.GoodType gt : playerHand.keySet()) {
+            if (playerHand.get(gt).getValue() >= jp.goodNCardsMinimumSell.get(gt)) {
+                // Can sell this good type ! We can choose any number of cards to
+                // sell of this type between minimum and how many we have
+                for (int n = jp.goodNCardsMinimumSell.get(gt); n <= playerHand.get(gt).getValue(); n++) {
+                    actions.add(new SellCards(gt, n));
+                }
+            }
+        }
 
         // Can take cards from the market, respecting hand limit
         // Option C: Take all camels, they don't count towards hand limit
         // TODO 1: Check how many camel cards are in the market. If more than 0, construct one TakeCards action object and add it to the `actions` ArrayList. (The `howManyPerTypeGiveFromHand` argument should be null)
+        int camelCount = jgs.market.get(JaipurCard.GoodType.Camel).getValue();
+        if (camelCount > 0) {
+            actions.add(new TakeCards(ImmutableMap.of(Camel, camelCount), null, currentPlayer));
+        }
 
         int nCardsInHand = 0;
-        for (JaipurCard.GoodType gt: playerHand.keySet()) {
+        for (JaipurCard.GoodType gt : playerHand.keySet()) {
             nCardsInHand += playerHand.get(gt).getValue();
         }
 
@@ -263,10 +279,19 @@ public class JaipurForwardModel extends StandardForwardModel {
         if (nCardsInHand < 7) {
             // Option B: Take a single (non-camel) card from the market
             // TODO 2: For each good type in the market, if there is at least 1 of that type (which is not a Camel), construct one TakeCards action object to take 1 of that type from the market, and add it to the `actions` ArrayList. (The `howManyPerTypeGiveFromHand` argument should be null)
+            for (JaipurCard.GoodType gt : jgs.market.keySet()) {
+                if (gt == Camel) {
+                    continue;
+                }
+                if (jgs.market.get(gt).getValue() > 0) {
+                    actions.add(new TakeCards(ImmutableMap.of(gt, 1), null, currentPlayer));
+                }
+            }
         }
 
         // Option A: Take several (non-camel) cards and replenish with cards of different types from hand (or with camels)
         // TODO (Advanced, bonus, optional): Calculate legal option A variations
+
 
         return actions;
     }
@@ -278,7 +303,7 @@ public class JaipurForwardModel extends StandardForwardModel {
         // Check game end
         JaipurGameState jgs = (JaipurGameState) currentState;
         JaipurParameters jp = (JaipurParameters) currentState.getGameParameters();
-        if (actionTaken instanceof TakeCards && ((TakeCards)actionTaken).isTriggerRoundEnd() || jgs.nGoodTokensSold.getValue() == jp.nGoodTokensEmptyRoundEnd) {
+        if (actionTaken instanceof TakeCards && ((TakeCards) actionTaken).isTriggerRoundEnd() || jgs.nGoodTokensSold.getValue() == jp.nGoodTokensEmptyRoundEnd) {
             // Round end!
             endRound(currentState);
 

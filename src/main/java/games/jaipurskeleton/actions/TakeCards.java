@@ -17,9 +17,7 @@ public class TakeCards extends AbstractAction {
 
     boolean triggerRoundEnd;
 
-    public TakeCards(ImmutableMap<JaipurCard.GoodType, Integer> howManyPerTypeTakeFromMarket,
-                     ImmutableMap<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand,
-                     int playerID) {
+    public TakeCards(ImmutableMap<JaipurCard.GoodType, Integer> howManyPerTypeTakeFromMarket, ImmutableMap<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand, int playerID) {
         this.howManyPerTypeTakeFromMarket = howManyPerTypeTakeFromMarket;
         this.howManyPerTypeGiveFromHand = howManyPerTypeGiveFromHand;
         this.playerID = playerID;
@@ -32,6 +30,7 @@ public class TakeCards extends AbstractAction {
      * {@link AbstractGameState#setActionInProgress(IExtendedSequence)} method with the argument <code>`this`</code>
      * to indicate that this action has multiple steps and is now in progress. This call could be wrapped in an <code>`if`</code>
      * statement if sometimes the action simply executes an effect in one step, or all parameters have values associated.</p>
+     *
      * @param gs - game state which should be modified by this action.
      * @return - true if successfully executed, false otherwise.
      */
@@ -46,9 +45,18 @@ public class TakeCards extends AbstractAction {
                 // Option C: Take ALL the camels.
 
                 // TODO 1: Increment player herds by the number of camels in the market
+                jgs.getPlayerHerds().get(playerID).increment(howMany);
                 // TODO 1: Remove all camels from the market
+                jgs.getMarket().get(goodType).decrement(howMany);
                 // TODO 1: Refill market with cards from the draw deck, to recquried market size
+                for (int i = 0; i < howMany; i++) {
+                    JaipurCard card = jgs.getDrawDeck().draw();
+                    jgs.getMarket().get(card.goodType).increment();
+                }
                 // TODO 1: If the draw deck becomes empty when trying to draw a new card, set `triggerRoundEnd` boolean flag to true
+                if (jgs.getDrawDeck().getSize() == 0) {
+                    triggerRoundEnd = true;
+                }
 
                 return true;
 
@@ -56,20 +64,27 @@ public class TakeCards extends AbstractAction {
                 // Option B: Take 1 single good
 
                 // TODO 2: Increment the number of cards the player has of this type (`goodType`) by 1
+                jgs.getPlayerHands().get(playerID).get(goodType).increment(howMany);
                 // TODO 2: Reduce the number of cards in the market of this type by 1
+                jgs.getMarket().get(goodType).decrement(howMany);
                 // TODO 2: Draw a new card from the draw deck (jgs.getDrawDeck().draw()) and increment the corresponding type in the market by 1
+                JaipurCard card = jgs.getDrawDeck().draw();
+                jgs.getMarket().get(card.goodType).increment();
                 // TODO 2: If the draw deck becomes empty when trying to draw a new card, set `triggerRoundEnd` boolean flag to true
+                if (jgs.getDrawDeck().getSize() == 0) {
+                    triggerRoundEnd = true;
+                }
 
                 return true;
             }
         }
 
         // Option A: Take several (non-camel) goods, replace the same number with cards from hand or camels
-        for (JaipurCard.GoodType gt: howManyPerTypeTakeFromMarket.keySet()) {
+        for (JaipurCard.GoodType gt : howManyPerTypeTakeFromMarket.keySet()) {
             jgs.getPlayerHands().get(playerID).get(gt).increment(howManyPerTypeTakeFromMarket.get(gt));
             jgs.getMarket().get(gt).decrement(howManyPerTypeTakeFromMarket.get(gt));
         }
-        for(JaipurCard.GoodType gt: howManyPerTypeGiveFromHand.keySet()) {
+        for (JaipurCard.GoodType gt : howManyPerTypeGiveFromHand.keySet()) {
             if (gt == JaipurCard.GoodType.Camel) {
                 jgs.getPlayerHerds().get(playerID).decrement(howManyPerTypeGiveFromHand.get(gt));
             } else {
@@ -97,8 +112,7 @@ public class TakeCards extends AbstractAction {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TakeCards)) return false;
-        TakeCards takeCards = (TakeCards) o;
+        if (!(o instanceof TakeCards takeCards)) return false;
         return playerID == takeCards.playerID && triggerRoundEnd == takeCards.triggerRoundEnd && Objects.equals(howManyPerTypeTakeFromMarket, takeCards.howManyPerTypeTakeFromMarket) && Objects.equals(howManyPerTypeGiveFromHand, takeCards.howManyPerTypeGiveFromHand);
     }
 
@@ -109,7 +123,7 @@ public class TakeCards extends AbstractAction {
 
     @Override
     public String toString() {
-        return "Take cards: " + howManyPerTypeTakeFromMarket.toString() + (howManyPerTypeGiveFromHand != null? " (replenish with: " + howManyPerTypeGiveFromHand + ")" : "");
+        return "Take cards: " + howManyPerTypeTakeFromMarket.toString() + (howManyPerTypeGiveFromHand != null ? " (replenish with: " + howManyPerTypeGiveFromHand + ")" : "");
     }
 
     /**
