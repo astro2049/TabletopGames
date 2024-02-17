@@ -14,7 +14,8 @@ import games.jaipurskeleton.components.JaipurToken;
 
 import java.util.*;
 
-import static core.CoreConstants.GameResult.*;
+import static core.CoreConstants.GameResult.LOSE_GAME;
+import static core.CoreConstants.GameResult.WIN_GAME;
 import static games.jaipurskeleton.components.JaipurCard.GoodType.*;
 
 /**
@@ -349,7 +350,7 @@ public class JaipurForwardModel extends StandardForwardModel {
                 jgs.recordHistory("Round scores: " + scores);
             }
 
-            if (roundsWon == 2) {
+            if (roundsWon == ((JaipurParameters) jgs.getGameParameters()).nRoundsWinForGameWin) {
                 // Game over, this player won
                 jgs.setGameStatus(CoreConstants.GameResult.GAME_END);
                 for (int i = 0; i < jgs.getNPlayers(); i++) {

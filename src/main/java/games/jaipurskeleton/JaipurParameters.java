@@ -28,13 +28,14 @@ public class JaipurParameters extends AbstractParameters {
         put(JaipurCard.GoodType.Leather, 1);
     }};
     Map<Integer, Integer[]> bonusTokensAvailable = new HashMap<Integer, Integer[]>() {{
-        put(3, new Integer[]{1,1,2,2,2,3,3});
-        put(4, new Integer[]{4,4,5,5,6,6});
-        put(5, new Integer[]{8,8,9,10,10});
+        put(3, new Integer[]{1, 1, 2, 2, 2, 3, 3});
+        put(4, new Integer[]{4, 4, 5, 5, 6, 6});
+        put(5, new Integer[]{8, 8, 9, 10, 10});
     }};
 
     int nPointsMostCamels = 5;
     int nGoodTokensEmptyRoundEnd = 3;
+    int nRoundsWinForGameWin = 2;
 
     public JaipurParameters() {
         super();
@@ -45,11 +46,12 @@ public class JaipurParameters extends AbstractParameters {
         super();
         this.goodNCardsMinimumSell = new HashMap<>(jaipurParameters.getGoodNCardsMinimumSell());
         this.bonusTokensAvailable = new HashMap<>();
-        for (int n: jaipurParameters.getBonusTokensAvailable().keySet()) {
+        for (int n : jaipurParameters.getBonusTokensAvailable().keySet()) {
             this.bonusTokensAvailable.put(n, jaipurParameters.getBonusTokensAvailable().get(n).clone());
         }
         this.nPointsMostCamels = jaipurParameters.getNPointsMostCamels();
         this.nGoodTokensEmptyRoundEnd = jaipurParameters.getNGoodTokensEmptyGameEnd();
+        this.nRoundsWinForGameWin = jaipurParameters.getNRoundsWinForGameWin();
     }
 
     public Map<JaipurCard.GoodType, Integer> getGoodNCardsMinimumSell() {
@@ -68,6 +70,10 @@ public class JaipurParameters extends AbstractParameters {
         return nGoodTokensEmptyRoundEnd;
     }
 
+    public int getNRoundsWinForGameWin() {
+        return nRoundsWinForGameWin;
+    }
+
     @Override
     protected AbstractParameters _copy() {
         return new JaipurParameters(this);
@@ -76,13 +82,14 @@ public class JaipurParameters extends AbstractParameters {
     @Override
     public boolean _equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof JaipurParameters that)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        return nPointsMostCamels == that.nPointsMostCamels && nGoodTokensEmptyRoundEnd == that.nGoodTokensEmptyRoundEnd && Objects.equals(goodNCardsMinimumSell, that.goodNCardsMinimumSell) && Objects.equals(bonusTokensAvailable, that.bonusTokensAvailable);
+        JaipurParameters that = (JaipurParameters) o;
+        return nPointsMostCamels == that.nPointsMostCamels && nGoodTokensEmptyRoundEnd == that.nGoodTokensEmptyRoundEnd && nRoundsWinForGameWin == that.nRoundsWinForGameWin && Objects.equals(goodNCardsMinimumSell, that.goodNCardsMinimumSell) && Objects.equals(bonusTokensAvailable, that.bonusTokensAvailable);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), goodNCardsMinimumSell, bonusTokensAvailable, nPointsMostCamels, nGoodTokensEmptyRoundEnd);
+        return Objects.hash(super.hashCode(), goodNCardsMinimumSell, bonusTokensAvailable, nPointsMostCamels, nGoodTokensEmptyRoundEnd, nRoundsWinForGameWin);
     }
 }

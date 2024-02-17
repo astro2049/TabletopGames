@@ -5,9 +5,9 @@ import core.AbstractPlayer;
 import core.Game;
 import games.jaipurskeleton.components.JaipurCard;
 import games.jaipurskeleton.gui.JaipurBonusTokenView;
+import games.jaipurskeleton.gui.JaipurGoodTokenView;
 import games.jaipurskeleton.gui.JaipurMarketView;
 import games.jaipurskeleton.gui.JaipurPlayerArea;
-import games.jaipurskeleton.gui.JaipurGoodTokenView;
 import gui.AbstractGUIManager;
 import gui.GamePanel;
 import gui.IScreenHighlight;
@@ -101,7 +101,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         for (int i = 0; i < game.getGameState().getNPlayers(); i++) {
             wrapperTop.add(new JaipurPlayerArea((JaipurGameState) game.getGameState(), game.getPlayers().get(i), i));
         }
-        this.width = border*2 + viewWidth*(2 + game.getGameState().getNPlayers());
+        this.width = border * 2 + viewWidth * (2 + game.getGameState().getNPlayers());
         playPanel.add(wrapperTop);
 
         // Bonus token view
@@ -123,7 +123,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         rules.setLayout(new FlowLayout());
         JLabel ruleText = new JLabel(getRuleText((JaipurParameters) game.getGameState().getGameParameters()));
         ruleText.setOpaque(false);
-        ruleText.setPreferredSize(new Dimension((int)(2/3.*defaultDisplayWidth),height));
+        ruleText.setPreferredSize(new Dimension((int) (2 / 3. * defaultDisplayWidth), height));
         rules.add(ruleText);
 
         pane.add("Main", main);
@@ -133,7 +133,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         JPanel wrapper = new JPanel();
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.X_AXIS));
         wrapper.setOpaque(false);
-        wrapper.add(Box.createRigidArea(new Dimension(border,height)));
+        wrapper.add(Box.createRigidArea(new Dimension(border, height)));
         wrapper.add(pane);
 
         parent.add(wrapper, BorderLayout.CENTER);
@@ -173,7 +173,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         rules += "<p>A round ends when " + params.nGoodTokensEmptyRoundEnd + " stacks of good tokens are empty, or no more cards are left in the draw pile when needing to replenish the market.</p><br/>";
         rules += "<p>At the end of the round, the player with the most camel cards wins the camel token and " + params.nPointsMostCamels + " bonus points.</p><br/>";
         rules += "<p>ROUND WIN: The player with the most points (from good tokens, bonus tokens and camel token) wins the round.</p><br/>";
-        rules += "<p>WIN: The player who wins majority of rounds played (" + 2 + ") wins.</p>";
+        rules += "<p>WIN: The player who wins majority of rounds played (" + params.nRoundsWinForGameWin + ") wins.</p>";
         rules += "<hr><p><b>INTERFACE: </b> Click action buttons.</p>";
         rules += "</html>";
         return rules;
