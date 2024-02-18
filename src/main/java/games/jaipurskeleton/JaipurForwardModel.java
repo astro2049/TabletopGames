@@ -254,7 +254,6 @@ public class JaipurForwardModel extends StandardForwardModel {
         }
         for (int i = 2; i <= marketCards.size(); i++) {
             ArrayList<int[]> takeChoices = Utils.generateCombinations(marketCards.stream().mapToInt(Integer::intValue).toArray(), i);
-            ArrayList<int[]> replaceChoices = Utils.generateCombinations(myCards.stream().mapToInt(Integer::intValue).toArray(), i);
             for (int[] takeChoice : takeChoices) {
                 Set<Integer> sTakeChoice = new HashSet<>();
                 Map<JaipurCard.GoodType, Integer> howManyPerTypeTakeFromMarket = new HashMap<>();
@@ -263,23 +262,22 @@ public class JaipurForwardModel extends StandardForwardModel {
                     howManyPerTypeTakeFromMarket.put(JaipurCard.GoodType.values()[takeChoice[j]],
                             howManyPerTypeTakeFromMarket.getOrDefault(JaipurCard.GoodType.values()[takeChoice[j]], 0) + 1);
                 }
-                boolean noSameCard = true;
+                List<Integer> myCardsAvailable = new ArrayList<>();
+                for (Integer myCard : myCards) {
+                    if (sTakeChoice.contains(myCard)) {
+                        continue;
+                    } else {
+                        myCardsAvailable.add(myCard);
+                    }
+                }
+                ArrayList<int[]> replaceChoices = Utils.generateCombinations(myCardsAvailable.stream().mapToInt(Integer::intValue).toArray(), i);
                 for (int[] replaceChoice : replaceChoices) {
+                    Map<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand = new HashMap<>();
                     for (int j = 0; j < i; j++) {
-                        if (sTakeChoice.contains(replaceChoice[j])) {
-                            noSameCard = false;
-                            break;
-                        }
+                        howManyPerTypeGiveFromHand.put(JaipurCard.GoodType.values()[replaceChoice[j]],
+                                howManyPerTypeGiveFromHand.getOrDefault(JaipurCard.GoodType.values()[replaceChoice[j]], 0) + 1);
                     }
-                    if (noSameCard) {
-                        Map<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand = new HashMap<>();
-                        for (int j = 0; j < i; j++) {
-                            howManyPerTypeGiveFromHand.put(JaipurCard.GoodType.values()[replaceChoice[j]],
-                                    howManyPerTypeGiveFromHand.getOrDefault(JaipurCard.GoodType.values()[replaceChoice[j]], 0) + 1);
-                        }
-                        actions.add(new TakeCards(ImmutableMap.copyOf(howManyPerTypeTakeFromMarket), ImmutableMap.copyOf(howManyPerTypeGiveFromHand), currentPlayer));
-                    }
-                    noSameCard = true;
+                    actions.add(new TakeCards(ImmutableMap.copyOf(howManyPerTypeTakeFromMarket), ImmutableMap.copyOf(howManyPerTypeGiveFromHand), currentPlayer));
                 }
             }
         }
