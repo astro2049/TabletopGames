@@ -90,11 +90,11 @@ public class JaipurGameState extends AbstractGameState {
         JaipurGameState copy = new JaipurGameState(gameParameters, getNPlayers());
         // Fully observable: market, good tokens, n good tokens sold, player scores, herds, n rounds won, n bonus tokens, ngood tokens
         copy.market = new HashMap<>();
-        for (JaipurCard.GoodType gt: market.keySet()) {
+        for (JaipurCard.GoodType gt : market.keySet()) {
             copy.market.put(gt, market.get(gt).copy());
         }
         copy.goodTokens = new HashMap<>();
-        for (JaipurCard.GoodType gt: goodTokens.keySet()) {
+        for (JaipurCard.GoodType gt : goodTokens.keySet()) {
             copy.goodTokens.put(gt, goodTokens.get(gt).copy());
         }
         copy.nGoodTokensSold = nGoodTokensSold.copy();
@@ -114,13 +114,13 @@ public class JaipurGameState extends AbstractGameState {
         copy.playerHands = new ArrayList<>();
         copy.drawDeck = drawDeck.copy();
         copy.bonusTokens = new HashMap<>();
-        for (int n: bonusTokens.keySet()) {
+        for (int n : bonusTokens.keySet()) {
             copy.bonusTokens.put(n, bonusTokens.get(n).copy());
         }
 
         for (int i = 0; i < getNPlayers(); i++) {
             Map<JaipurCard.GoodType, Counter> playerHandCopy = new HashMap<>();
-            for (JaipurCard.GoodType gt: playerHands.get(i).keySet()) {
+            for (JaipurCard.GoodType gt : playerHands.get(i).keySet()) {
                 playerHandCopy.put(gt, playerHands.get(i).get(gt).copy());
             }
             copy.playerHands.add(playerHandCopy);
@@ -131,22 +131,53 @@ public class JaipurGameState extends AbstractGameState {
             Random r = new Random(gameParameters.getRandomSeed());
 
             // Hide the bonus token order
-            for (int n: bonusTokens.keySet()) {
+            for (int n : bonusTokens.keySet()) {
                 copy.bonusTokens.get(n).shuffle(r);
             }
 
             // Hide! Shuffle together opponent player hands and the deck
             // TODO: Iterate through the players. If they're not the `playerId` observing the state (passed as argument to this method), then:
-            // TODO: Iterate through the good types in their hands. Set all to 0 *in the copy*.
-            // TODO: Count how many cards each player has in their hands in total.
-            // TODO: Add new JaipurCard objects of the corresponding type to the *copy draw deck*, as many as the player has in their hand.
+            HashMap<Integer, Integer> handsCount = new HashMap<>();
+            for (int i = 0; i < getNPlayers(); i++) {
+                if (i != playerId) {
+                    // TODO: Iterate through the good types in their hands. Set all to 0 *in the copy*.
+                    // TODO: Count how many cards each player has in their hands in total.
+                    // TODO: Add new JaipurCard objects of the corresponding type to the *copy draw deck*, as many as the player has in their hand.
+                    int handCount = 0;
+                    for (JaipurCard.GoodType gt : copy.playerHands.get(i).keySet()) {
+                        for (int j = 0; j < copy.playerHands.get(i).get(gt).getValue(); j++) {
+                            copy.drawDeck.add(new JaipurCard(gt));
+                        }
+                        handCount += copy.playerHands.get(i).get(gt).getValue();
+                        copy.playerHands.get(i).get(gt).setValue(0);
+                    }
+                    handsCount.put(i, handCount);
+                }
+            }
             // TODO: After going through all the players, shuffle the *copy draw deck*.
+            copy.drawDeck.shuffle(r);
 
             // Then draw new cards for opponent
             // TODO: Iterate through the players. If they're the `playerId` observing the state (passed as argument to this method), copy the exact hand of the player into the *copy game state*
-            // TODO: Otherwise, draw new cards from the *copy draw deck* and update the *copy player hand* appropriately (you can check this same functionality in the round setup performed in the Forward Model for help)
-            // TODO: Make sure to ignore camels, and put them back at the bottom of the *copy draw deck*, e.g. copy.drawDeck.add(card,copy.drawDeck.getSize()); Camels don't stay in player's hands, so we're only filling hands with non-camel cards
+            for (int i = 0; i < getNPlayers(); i++) {
+                if (i == playerId) {
+                    continue;
+                } else {
+                    // TODO: Otherwise, draw new cards from the *copy draw deck* and update the *copy player hand* appropriately (you can check this same functionality in the round setup performed in the Forward Model for help)
+                    for (int j = 0; j < handsCount.get(i); ) {
+                        JaipurCard card = copy.drawDeck.draw();
+                        // TODO: Make sure to ignore camels, and put them back at the bottom of the *copy draw deck*, e.g. copy.drawDeck.add(card,copy.drawDeck.getSize()); Camels don't stay in player's hands, so we're only filling hands with non-camel cards
+                        if (card.goodType == JaipurCard.GoodType.Camel) {
+                            copy.drawDeck.add(card, copy.drawDeck.getSize());
+                        } else {
+                            copy.playerHands.get(i).get(card.goodType).increment();
+                            j++;
+                        }
+                    }
+                }
+            }
             // TODO: At the end of this process, reshuffle the *copy draw deck* to make sure any camels that were drawn and put back are randomly distributed too
+            copy.drawDeck.shuffle(r);
         }
         return copy;
     }
@@ -234,9 +265,8 @@ public class JaipurGameState extends AbstractGameState {
     @Override
     public boolean _equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof JaipurGameState)) return false;
+        if (!(o instanceof JaipurGameState that)) return false;
         if (!super.equals(o)) return false;
-        JaipurGameState that = (JaipurGameState) o;
         return Objects.equals(playerHands, that.playerHands) && Objects.equals(playerHerds, that.playerHerds) && Objects.equals(drawDeck, that.drawDeck) && Objects.equals(market, that.market) && Objects.equals(goodTokens, that.goodTokens) && Objects.equals(nGoodTokensSold, that.nGoodTokensSold) && Objects.equals(bonusTokens, that.bonusTokens) && Objects.equals(playerScores, that.playerScores) && Objects.equals(playerNRoundsWon, that.playerNRoundsWon) && Objects.equals(playerNBonusTokens, that.playerNBonusTokens) && Objects.equals(playerNGoodTokens, that.playerNGoodTokens);
     }
 
