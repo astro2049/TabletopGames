@@ -11,6 +11,7 @@ import games.jaipurskeleton.actions.SellCards;
 import games.jaipurskeleton.actions.TakeCards;
 import games.jaipurskeleton.components.JaipurCard;
 import games.jaipurskeleton.components.JaipurToken;
+import utilities.Utils;
 
 import java.util.*;
 
@@ -69,7 +70,7 @@ public class JaipurForwardModel extends StandardForwardModel {
 
             Map<JaipurCard.GoodType, Counter> playerHand = new HashMap<>();
             for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
-                if (gt != JaipurCard.GoodType.Camel) {
+                if (gt != Camel) {
                     // Hand limit of 7
                     playerHand.put(gt, new Counter(0, 0, jp.getHandLimit(), "Player " + i + " hand: " + gt));
                 }
@@ -87,7 +88,7 @@ public class JaipurForwardModel extends StandardForwardModel {
         // Market initialisation
         // Place 3 camel cards in the market
         for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
-            if (gt == JaipurCard.GoodType.Camel) {
+            if (gt == Camel) {
                 gs.market.get(gt).setValue(jp.getNCamelsInMarketAtStart());
             } else {
                 gs.market.get(gt).setValue(0);
@@ -116,7 +117,7 @@ public class JaipurForwardModel extends StandardForwardModel {
             // First, reset
             gs.playerHerds.get(i).setValue(0);
             for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
-                if (gt != JaipurCard.GoodType.Camel) {
+                if (gt != Camel) {
                     playerHand.get(gt).setValue(0);
                 }
             }
@@ -126,7 +127,7 @@ public class JaipurForwardModel extends StandardForwardModel {
                 JaipurCard card = gs.drawDeck.draw();
 
                 // If camel, it goes into the herd instead
-                if (card.goodType == JaipurCard.GoodType.Camel) {
+                if (card.goodType == Camel) {
                     gs.playerHerds.get(i).increment();
                 } else {
                     // Otherwise, into the player's hand
@@ -207,7 +208,7 @@ public class JaipurForwardModel extends StandardForwardModel {
         // Can take cards from the market, respecting hand limit
         // Option C: Take all camels, they don't count towards hand limit
         // TODO 1: Check how many camel cards are in the market. If more than 0, construct one TakeCards action object and add it to the `actions` ArrayList. (The `howManyPerTypeGiveFromHand` argument should be null)
-        int camelCount = jgs.market.get(JaipurCard.GoodType.Camel).getValue();
+        int camelCount = jgs.market.get(Camel).getValue();
         if (camelCount > 0) {
             actions.add(new TakeCards(ImmutableMap.of(Camel, camelCount), null, currentPlayer));
         }
@@ -233,7 +234,55 @@ public class JaipurForwardModel extends StandardForwardModel {
 
         // Option A: Take several (non-camel) cards and replenish with cards of different types from hand (or with camels)
         // TODO (Advanced, bonus, optional): Calculate legal option A variations
-
+        List<Integer> marketCards = new ArrayList<>();
+        for (JaipurCard.GoodType gt : jgs.market.keySet()) {
+            if (gt == Camel) {
+                continue;
+            }
+            for (int i = 0; i < jgs.market.get(gt).getValue(); i++) {
+                marketCards.add(gt.ordinal());
+            }
+        }
+        List<Integer> myCards = new ArrayList<>();
+        for (int i = 0; i < jgs.playerHerds.get(currentPlayer).getValue(); i++) {
+            myCards.add(Camel.ordinal());
+        }
+        for (JaipurCard.GoodType gt : jgs.playerHands.get(currentPlayer).keySet()) {
+            for (int i = 0; i < jgs.playerHands.get(currentPlayer).get(gt).getValue(); i++) {
+                myCards.add(gt.ordinal());
+            }
+        }
+        for (int i = 2; i <= marketCards.size(); i++) {
+            ArrayList<int[]> takeChoices = Utils.generateCombinations(marketCards.stream().mapToInt(Integer::intValue).toArray(), i);
+            ArrayList<int[]> replaceChoices = Utils.generateCombinations(myCards.stream().mapToInt(Integer::intValue).toArray(), i);
+            for (int[] takeChoice : takeChoices) {
+                Set<Integer> sTakeChoice = new HashSet<>();
+                Map<JaipurCard.GoodType, Integer> howManyPerTypeTakeFromMarket = new HashMap<>();
+                for (int j = 0; j < i; j++) {
+                    sTakeChoice.add(takeChoice[j]);
+                    howManyPerTypeTakeFromMarket.put(JaipurCard.GoodType.values()[takeChoice[j]],
+                            howManyPerTypeTakeFromMarket.getOrDefault(JaipurCard.GoodType.values()[takeChoice[j]], 0) + 1);
+                }
+                boolean noSameCard = true;
+                for (int[] replaceChoice : replaceChoices) {
+                    for (int j = 0; j < i; j++) {
+                        if (sTakeChoice.contains(replaceChoice[j])) {
+                            noSameCard = false;
+                            break;
+                        }
+                    }
+                    if (noSameCard) {
+                        Map<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand = new HashMap<>();
+                        for (int j = 0; j < i; j++) {
+                            howManyPerTypeGiveFromHand.put(JaipurCard.GoodType.values()[replaceChoice[j]],
+                                    howManyPerTypeGiveFromHand.getOrDefault(JaipurCard.GoodType.values()[replaceChoice[j]], 0) + 1);
+                        }
+                        actions.add(new TakeCards(ImmutableMap.copyOf(howManyPerTypeTakeFromMarket), ImmutableMap.copyOf(howManyPerTypeGiveFromHand), currentPlayer));
+                    }
+                    noSameCard = true;
+                }
+            }
+        }
 
         return actions;
     }

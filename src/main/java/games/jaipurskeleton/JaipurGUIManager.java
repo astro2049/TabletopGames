@@ -151,7 +151,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
      */
     @Override
     public int getMaxActionSpace() {
-        return 10;   // TODO: increase this number if doing optional exercise week 1
+        return 30;   // TODO: increase this number if doing optional exercise week 1
     }
 
     /**
