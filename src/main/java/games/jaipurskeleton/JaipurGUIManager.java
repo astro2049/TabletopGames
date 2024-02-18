@@ -168,7 +168,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         String rules = "<html><center><h1>Jaipur</h1></center><br/><hr><br/>";
         rules += "<p>Players sell good cards from their hands for good tokens, or take cards from the market, alternating turns.</p><br/>";
         rules += "<p>Selling several cards at the same time can earn the players bonus tokens.</p><br/>";
-        rules += "<p>Players have a hand limit of " + 7 + " cards. Camel cards go in a separate pile and don't count towards this limit.</p><br/>";
+        rules += "<p>Players have a hand limit of " + params.handLimit + " cards. Camel cards go in a separate pile and don't count towards this limit.</p><br/>";
         rules += "<p>If taking Camels from the market, all camels must be taken. If exchanging cards in the market, camel cards from the player's herd can be used.</p><br/>";
         rules += "<p>A round ends when " + params.nGoodTokensEmptyRoundEnd + " stacks of good tokens are empty, or no more cards are left in the draw pile when needing to replenish the market.</p><br/>";
         rules += "<p>At the end of the round, the player with the most camel cards wins the camel token and " + params.nPointsMostCamels + " bonus points.</p><br/>";

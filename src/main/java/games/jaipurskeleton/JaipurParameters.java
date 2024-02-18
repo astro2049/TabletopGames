@@ -44,6 +44,19 @@ public class JaipurParameters extends AbstractParameters {
         put(JaipurCard.GoodType.Spice, new Integer[]{1, 1, 2, 2, 3, 3, 5});
         put(JaipurCard.GoodType.Leather, new Integer[]{1, 1, 1, 1, 1, 1, 2, 3, 4});
     }};
+    int handLimit = 7;
+    int nCardsInHandAtStart = 5;
+    int marketSize = 5;
+    int nCamelsInMarketAtStart = 3;
+    Map<JaipurCard.GoodType, Integer> drawDeckCards = new HashMap<>() {{
+        put(JaipurCard.GoodType.Diamonds, 6);
+        put(JaipurCard.GoodType.Gold, 6);
+        put(JaipurCard.GoodType.Silver, 6);
+        put(JaipurCard.GoodType.Cloth, 8);
+        put(JaipurCard.GoodType.Spice, 8);
+        put(JaipurCard.GoodType.Leather, 10);
+        put(JaipurCard.GoodType.Camel, 11);
+    }};
 
     public JaipurParameters() {
         super();
@@ -90,6 +103,26 @@ public class JaipurParameters extends AbstractParameters {
         return goodTokensProgression;
     }
 
+    public int getHandLimit() {
+        return handLimit;
+    }
+
+    public int getNCardsInHandAtStart() {
+        return nCardsInHandAtStart;
+    }
+
+    public int getMarketSize() {
+        return marketSize;
+    }
+
+    public int getNCamelsInMarketAtStart() {
+        return nCamelsInMarketAtStart;
+    }
+
+    public Map<JaipurCard.GoodType, Integer> getDrawDeckCards() {
+        return drawDeckCards;
+    }
+
     @Override
     protected AbstractParameters _copy() {
         return new JaipurParameters(this);
@@ -101,11 +134,11 @@ public class JaipurParameters extends AbstractParameters {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         JaipurParameters that = (JaipurParameters) o;
-        return nPointsMostCamels == that.nPointsMostCamels && nGoodTokensEmptyRoundEnd == that.nGoodTokensEmptyRoundEnd && nRoundsWinForGameWin == that.nRoundsWinForGameWin && Objects.equals(goodNCardsMinimumSell, that.goodNCardsMinimumSell) && Objects.equals(bonusTokensAvailable, that.bonusTokensAvailable) && Objects.equals(goodTokensProgression, that.goodTokensProgression);
+        return nPointsMostCamels == that.nPointsMostCamels && nGoodTokensEmptyRoundEnd == that.nGoodTokensEmptyRoundEnd && nRoundsWinForGameWin == that.nRoundsWinForGameWin && handLimit == that.handLimit && nCardsInHandAtStart == that.nCardsInHandAtStart && marketSize == that.marketSize && nCamelsInMarketAtStart == that.nCamelsInMarketAtStart && Objects.equals(goodNCardsMinimumSell, that.goodNCardsMinimumSell) && Objects.equals(bonusTokensAvailable, that.bonusTokensAvailable) && Objects.equals(goodTokensProgression, that.goodTokensProgression) && Objects.equals(drawDeckCards, that.drawDeckCards);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), goodNCardsMinimumSell, bonusTokensAvailable, nPointsMostCamels, nGoodTokensEmptyRoundEnd, nRoundsWinForGameWin, goodTokensProgression);
+        return Objects.hash(super.hashCode(), goodNCardsMinimumSell, bonusTokensAvailable, nPointsMostCamels, nGoodTokensEmptyRoundEnd, nRoundsWinForGameWin, goodTokensProgression, handLimit, nCardsInHandAtStart, marketSize, nCamelsInMarketAtStart, drawDeckCards);
     }
 }
