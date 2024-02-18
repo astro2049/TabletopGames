@@ -164,56 +164,14 @@ public class JaipurForwardModel extends StandardForwardModel {
         gs.bonusTokens.clear();
 
         // Initialize the good tokens
-        Deck<JaipurToken> tokenDeck1 = new Deck<>("Good tokens " + Diamonds, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck1.add(new JaipurToken(Diamonds, 5));
-        tokenDeck1.add(new JaipurToken(Diamonds, 5));
-        tokenDeck1.add(new JaipurToken(Diamonds, 5));
-        tokenDeck1.add(new JaipurToken(Diamonds, 7));
-        tokenDeck1.add(new JaipurToken(Diamonds, 7));
-        gs.goodTokens.put(Diamonds, tokenDeck1);
-        Deck<JaipurToken> tokenDeck2 = new Deck<>("Good tokens " + Gold, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck2.add(new JaipurToken(Gold, 5));
-        tokenDeck2.add(new JaipurToken(Gold, 5));
-        tokenDeck2.add(new JaipurToken(Gold, 5));
-        tokenDeck2.add(new JaipurToken(Gold, 6));
-        tokenDeck2.add(new JaipurToken(Gold, 6));
-        gs.goodTokens.put(Gold, tokenDeck2);
-        Deck<JaipurToken> tokenDeck3 = new Deck<>("Good tokens " + Silver, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck3.add(new JaipurToken(Silver, 5));
-        tokenDeck3.add(new JaipurToken(Silver, 5));
-        tokenDeck3.add(new JaipurToken(Silver, 5));
-        tokenDeck3.add(new JaipurToken(Silver, 5));
-        tokenDeck3.add(new JaipurToken(Silver, 5));
-        gs.goodTokens.put(Silver, tokenDeck3);
-        Deck<JaipurToken> tokenDeck4 = new Deck<>("Good tokens " + Cloth, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck4.add(new JaipurToken(Cloth, 1));
-        tokenDeck4.add(new JaipurToken(Cloth, 1));
-        tokenDeck4.add(new JaipurToken(Cloth, 2));
-        tokenDeck4.add(new JaipurToken(Cloth, 2));
-        tokenDeck4.add(new JaipurToken(Cloth, 3));
-        tokenDeck4.add(new JaipurToken(Cloth, 3));
-        tokenDeck4.add(new JaipurToken(Cloth, 5));
-        gs.goodTokens.put(Cloth, tokenDeck4);
-        Deck<JaipurToken> tokenDeck5 = new Deck<>("Good tokens " + Spice, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck5.add(new JaipurToken(Spice, 1));
-        tokenDeck5.add(new JaipurToken(Spice, 1));
-        tokenDeck5.add(new JaipurToken(Spice, 2));
-        tokenDeck5.add(new JaipurToken(Spice, 2));
-        tokenDeck5.add(new JaipurToken(Spice, 3));
-        tokenDeck5.add(new JaipurToken(Spice, 3));
-        tokenDeck5.add(new JaipurToken(Spice, 5));
-        gs.goodTokens.put(Spice, tokenDeck5);
-        Deck<JaipurToken> tokenDeck6 = new Deck<>("Good tokens " + Leather, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 1));
-        tokenDeck6.add(new JaipurToken(Leather, 2));
-        tokenDeck6.add(new JaipurToken(Leather, 3));
-        tokenDeck6.add(new JaipurToken(Leather, 4));
-        gs.goodTokens.put(Leather, tokenDeck6);
+        for (JaipurCard.GoodType type : jp.goodTokensProgression.keySet()) {
+            Integer[] progression = jp.goodTokensProgression.get(type);
+            Deck<JaipurToken> tokenDeck = new Deck<>(" Good tokens " + type, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
+            for (int p : progression) {
+                tokenDeck.add(new JaipurToken(type, p));
+            }
+            gs.goodTokens.put(type, tokenDeck);
+        }
 
         // Initialize the bonus tokens
         for (int nSold : jp.bonusTokensAvailable.keySet()) {

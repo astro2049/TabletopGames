@@ -50,12 +50,13 @@ public class TakeCards extends AbstractAction {
                 jgs.getMarket().get(goodType).decrement(howMany);
                 // TODO 1: Refill market with cards from the draw deck, to recquried market size
                 for (int i = 0; i < howMany; i++) {
+                    // TODO 1: If the draw deck becomes empty when trying to draw a new card, set `triggerRoundEnd` boolean flag to true
+                    if (jgs.getDrawDeck().getSize() == 0) {
+                        triggerRoundEnd = true;
+                        return true;
+                    }
                     JaipurCard card = jgs.getDrawDeck().draw();
                     jgs.getMarket().get(card.goodType).increment();
-                }
-                // TODO 1: If the draw deck becomes empty when trying to draw a new card, set `triggerRoundEnd` boolean flag to true
-                if (jgs.getDrawDeck().getSize() == 0) {
-                    triggerRoundEnd = true;
                 }
 
                 return true;
@@ -68,12 +69,13 @@ public class TakeCards extends AbstractAction {
                 // TODO 2: Reduce the number of cards in the market of this type by 1
                 jgs.getMarket().get(goodType).decrement(howMany);
                 // TODO 2: Draw a new card from the draw deck (jgs.getDrawDeck().draw()) and increment the corresponding type in the market by 1
-                JaipurCard card = jgs.getDrawDeck().draw();
-                jgs.getMarket().get(card.goodType).increment();
                 // TODO 2: If the draw deck becomes empty when trying to draw a new card, set `triggerRoundEnd` boolean flag to true
                 if (jgs.getDrawDeck().getSize() == 0) {
                     triggerRoundEnd = true;
+                    return true;
                 }
+                JaipurCard card = jgs.getDrawDeck().draw();
+                jgs.getMarket().get(card.goodType).increment();
 
                 return true;
             }
