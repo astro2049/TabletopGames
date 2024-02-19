@@ -14,6 +14,7 @@ import games.jaipurskeleton.components.JaipurToken;
 import utilities.Utils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static core.CoreConstants.GameResult.LOSE_GAME;
 import static core.CoreConstants.GameResult.WIN_GAME;
@@ -253,7 +254,8 @@ public class JaipurForwardModel extends StandardForwardModel {
             }
         }
         for (int i = 2; i <= marketCards.size(); i++) {
-            ArrayList<int[]> takeChoices = Utils.generateCombinations(marketCards.stream().mapToInt(Integer::intValue).toArray(), i);
+            List<int[]> takeChoices = Utils.generateCombinations(marketCards.stream().mapToInt(Integer::intValue).toArray(), i);
+            takeChoices = removeDuplicates(takeChoices);
             for (int[] takeChoice : takeChoices) {
                 Set<Integer> sTakeChoice = new HashSet<>();
                 Map<JaipurCard.GoodType, Integer> howManyPerTypeTakeFromMarket = new HashMap<>();
@@ -270,7 +272,8 @@ public class JaipurForwardModel extends StandardForwardModel {
                         myCardsAvailable.add(myCard);
                     }
                 }
-                ArrayList<int[]> replaceChoices = Utils.generateCombinations(myCardsAvailable.stream().mapToInt(Integer::intValue).toArray(), i);
+                List<int[]> replaceChoices = Utils.generateCombinations(myCardsAvailable.stream().mapToInt(Integer::intValue).toArray(), i);
+                replaceChoices = removeDuplicates(replaceChoices);
                 for (int[] replaceChoice : replaceChoices) {
                     Map<JaipurCard.GoodType, Integer> howManyPerTypeGiveFromHand = new HashMap<>();
                     for (int j = 0; j < i; j++) {
@@ -283,6 +286,13 @@ public class JaipurForwardModel extends StandardForwardModel {
         }
 
         return actions;
+    }
+
+    List<int[]> removeDuplicates(List<int[]> choices) {
+        Set<String> seen = new HashSet<>();
+        return choices.stream()
+                .filter(choice -> seen.add(Arrays.toString(choice)))
+                .collect(Collectors.toList()); // Credit: GPT-4
     }
 
     @Override

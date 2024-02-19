@@ -132,7 +132,6 @@ public class JaipurParameters extends AbstractParameters {
     public boolean _equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         JaipurParameters that = (JaipurParameters) o;
         return nPointsMostCamels == that.nPointsMostCamels && nGoodTokensEmptyRoundEnd == that.nGoodTokensEmptyRoundEnd && nRoundsWinForGameWin == that.nRoundsWinForGameWin && handLimit == that.handLimit && nCardsInHandAtStart == that.nCardsInHandAtStart && marketSize == that.marketSize && nCamelsInMarketAtStart == that.nCamelsInMarketAtStart && Objects.equals(goodNCardsMinimumSell, that.goodNCardsMinimumSell) && Objects.equals(bonusTokensAvailable, that.bonusTokensAvailable) && Objects.equals(goodTokensProgression, that.goodTokensProgression) && Objects.equals(drawDeckCards, that.drawDeckCards);
     }
