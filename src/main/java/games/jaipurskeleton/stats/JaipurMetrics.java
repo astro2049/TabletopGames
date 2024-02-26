@@ -87,7 +87,7 @@ public class JaipurMetrics implements IMetricsCollection {
         }
     }
 
-    static public class WinAsFirstPlayer extends AbstractMetric {
+    static public class WinRoundAsFirstPlayer extends AbstractMetric {
 
         @Override
         protected boolean _run(MetricsGameListener listener, Event e, Map<String, Object> records) {
