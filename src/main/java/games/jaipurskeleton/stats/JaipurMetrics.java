@@ -86,4 +86,63 @@ public class JaipurMetrics implements IMetricsCollection {
             return columns;
         }
     }
+
+    static public class WinAsFirstPlayer extends AbstractMetric {
+
+        @Override
+        protected boolean _run(MetricsGameListener listener, Event e, Map<String, Object> records) {
+            JaipurGameState jgs = (JaipurGameState) e.state;
+            records.put("WinAsFirstPlayer", jgs.getOrdinalPosition(e.state.getFirstPlayer()) == 1);
+            return true;
+        }
+
+        @Override
+        public Set<IGameEvent> getDefaultEventTypes() {
+            return Collections.singleton(Event.GameEvent.ROUND_OVER);
+        }
+
+        @Override
+        public Map<String, Class<?>> getColumns(int nPlayersPerGame, Set<String> playerNames) {
+            Map<String, Class<?>> columns = new HashMap<>();
+            columns.put("WinAsFirstPlayer", Boolean.class);
+            return columns;
+        }
+    }
+
+    static public class ActionType extends AbstractMetric {
+
+        @Override
+        protected boolean _run(MetricsGameListener listener, Event e, Map<String, Object> records) {
+            AbstractAction action = e.action;
+            if (action instanceof TakeCards tc) {
+                if (tc.howManyPerTypeGiveFromHand == null) {
+                    if (!tc.howManyPerTypeTakeFromMarket.containsKey(JaipurCard.GoodType.Camel)) {
+                        records.put("Take a card", 1);
+                    } else {
+                        records.put("Take the camels", 1);
+                    }
+                } else {
+                    records.put("Take multiple", 1);
+                }
+            } else {
+                records.put("Sell goods", 1);
+            }
+            return true;
+        }
+
+        @Override
+        public Set<IGameEvent> getDefaultEventTypes() {
+            return Collections.singleton(Event.GameEvent.ACTION_CHOSEN);
+        }
+
+        @Override
+        public Map<String, Class<?>> getColumns(int nPlayersPerGame, Set<String> playerNames) {
+            Map<String, Class<?>> columns = new HashMap<>();
+            columns.put("Take a card", Integer.class);
+            columns.put("Take the camels", Integer.class);
+            columns.put("Take multiple", Integer.class);
+            columns.put("Sell goods", Integer.class);
+            return columns;
+        }
+    }
 }

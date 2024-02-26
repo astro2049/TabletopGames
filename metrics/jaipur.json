@@ -3,7 +3,9 @@
   "args": [
     [
       {"class": "games.jaipurskeleton.stats.JaipurMetrics$RoundScoreDifference" },
-      {"class": "games.jaipurskeleton.stats.JaipurMetrics$PurchaseFromMarket" }
+      {"class": "games.jaipurskeleton.stats.JaipurMetrics$PurchaseFromMarket" },
+      {"class": "games.jaipurskeleton.stats.JaipurMetrics$WinAsFirstPlayer" },
+      {"class": "games.jaipurskeleton.stats.JaipurMetrics$ActionType" }
     ]
   ]
 }
