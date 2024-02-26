@@ -60,6 +60,7 @@ public class JaipurParameters extends AbstractParameters {
         put(JaipurCard.GoodType.Leather, 10);
         put(JaipurCard.GoodType.Camel, 11);
     }};
+    boolean useObsidianCards = false;
 
     public JaipurParameters() {
         super();

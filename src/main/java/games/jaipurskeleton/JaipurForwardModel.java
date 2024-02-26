@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import static core.CoreConstants.GameResult.LOSE_GAME;
 import static core.CoreConstants.GameResult.WIN_GAME;
 import static games.jaipurskeleton.components.JaipurCard.GoodType.Camel;
+import static games.jaipurskeleton.components.JaipurCard.GoodType.Obsidian;
 
 /**
  * Jaipur rules: <a href="https://www.fgbradleys.com/rules/rules2/Jaipur-rules.pdf">pdf here</a>
@@ -99,6 +100,9 @@ public class JaipurForwardModel extends StandardForwardModel {
         // Create deck of cards
         gs.drawDeck.clear();
         for (JaipurCard.GoodType gt : JaipurCard.GoodType.values()) {
+            if (gt == Obsidian && !jp.useObsidianCards) {
+                continue;
+            }
             int count = jp.getDrawDeckCards().get(gt);
             if (gt == Camel) {
                 // 11 Camel cards, - 3 already in the market
@@ -150,6 +154,9 @@ public class JaipurForwardModel extends StandardForwardModel {
 
         // Initialize the good tokens
         for (JaipurCard.GoodType type : jp.goodTokensProgression.keySet()) {
+            if (type == Obsidian && !jp.useObsidianCards) {
+                continue;
+            }
             Integer[] progression = jp.goodTokensProgression.get(type);
             Deck<JaipurToken> tokenDeck = new Deck<>(" Good tokens " + type, CoreConstants.VisibilityMode.VISIBLE_TO_ALL);
             for (int p : progression) {
