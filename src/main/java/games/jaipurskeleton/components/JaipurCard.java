@@ -15,6 +15,7 @@ import java.util.Objects;
  */
 public class JaipurCard extends Component {
     public enum GoodType {
+        Obsidian,
         Diamonds,
         Gold,
         Silver,

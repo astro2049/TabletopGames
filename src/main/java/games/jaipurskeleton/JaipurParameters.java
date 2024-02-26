@@ -20,6 +20,7 @@ import java.util.Objects;
  */
 public class JaipurParameters extends AbstractParameters {
     Map<JaipurCard.GoodType, Integer> goodNCardsMinimumSell = new HashMap<JaipurCard.GoodType, Integer>() {{
+        put(JaipurCard.GoodType.Obsidian, 3);
         put(JaipurCard.GoodType.Diamonds, 2);
         put(JaipurCard.GoodType.Gold, 2);
         put(JaipurCard.GoodType.Silver, 2);
@@ -37,6 +38,7 @@ public class JaipurParameters extends AbstractParameters {
     int nGoodTokensEmptyRoundEnd = 3;
     int nRoundsWinForGameWin = 2;
     Map<JaipurCard.GoodType, Integer[]> goodTokensProgression = new HashMap<>() {{
+        put(JaipurCard.GoodType.Obsidian, new Integer[]{6, 6, 6, 8, 8});
         put(JaipurCard.GoodType.Diamonds, new Integer[]{5, 5, 5, 7, 7});
         put(JaipurCard.GoodType.Gold, new Integer[]{5, 5, 5, 6, 6});
         put(JaipurCard.GoodType.Silver, new Integer[]{5, 5, 5, 5, 5});
@@ -49,6 +51,7 @@ public class JaipurParameters extends AbstractParameters {
     int marketSize = 5;
     int nCamelsInMarketAtStart = 3;
     Map<JaipurCard.GoodType, Integer> drawDeckCards = new HashMap<>() {{
+        put(JaipurCard.GoodType.Obsidian, 6);
         put(JaipurCard.GoodType.Diamonds, 6);
         put(JaipurCard.GoodType.Gold, 6);
         put(JaipurCard.GoodType.Silver, 6);

@@ -38,6 +38,7 @@ import static games.jaipurskeleton.components.JaipurCard.GoodType.*;
 public class JaipurGUIManager extends AbstractGUIManager {
 
     public static HashMap<JaipurCard.GoodType, Color> goodColorMapping = new HashMap<JaipurCard.GoodType, Color>() {{
+        put(Obsidian, (new Color(61, 40, 86)));
         put(Diamonds, (new Color(217, 31, 31)));
         put(Gold, (new Color(232, 173, 57)));
         put(Silver, (new Color(128, 149, 159)));
@@ -47,6 +48,7 @@ public class JaipurGUIManager extends AbstractGUIManager {
         put(Camel, new Color(132, 171, 224));
     }};
     public static HashMap<JaipurCard.GoodType, Color> soldGoodColorMapping = new HashMap<JaipurCard.GoodType, Color>() {{
+        put(Obsidian, (new Color(113, 98, 122)));
         put(Diamonds, (new Color(246, 198, 198)));
         put(Gold, (new Color(245, 232, 206)));
         put(Silver, (new Color(216, 235, 243)));
