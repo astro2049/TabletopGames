@@ -252,13 +252,15 @@ public class JaipurForwardModel extends StandardForwardModel {
             }
         }
         List<Integer> myCards = new ArrayList<>();
-        for (int i = 0; i < jgs.playerHerds.get(currentPlayer).getValue() && i < jp.getHandLimit() - jgs.playerHands.get(currentPlayer).size(); i++) {
-            myCards.add(Camel.ordinal());
-        }
+        int handCount = 0;
         for (JaipurCard.GoodType gt : jgs.playerHands.get(currentPlayer).keySet()) {
             for (int i = 0; i < jgs.playerHands.get(currentPlayer).get(gt).getValue(); i++) {
                 myCards.add(gt.ordinal());
+                handCount++;
             }
+        }
+        for (int i = 0; i < jgs.playerHerds.get(currentPlayer).getValue() && i < jp.getHandLimit() - handCount; i++) {
+            myCards.add(Camel.ordinal());
         }
         for (int i = 2; i <= marketCards.size(); i++) {
             List<int[]> takeChoices = Utils.generateCombinations(marketCards.stream().mapToInt(Integer::intValue).toArray(), i);
