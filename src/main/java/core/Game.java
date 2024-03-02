@@ -16,6 +16,7 @@ import players.basicMCTS.BasicMCTSPlayer;
 import players.human.ActionController;
 import players.human.HumanConsolePlayer;
 import players.human.HumanGUIPlayer;
+import players.mcts.MCTSParams;
 import players.mcts.MCTSPlayer;
 import players.mcts.MCTSPlayer;
 import players.rmhc.RMHCParams;
@@ -844,10 +845,11 @@ public class Game {
 
 //        MCTSParams params = new MCTSParams();
 //        players.add(new MCTSPlayer(params));
+//        players.add(new MCTSPlayer(params));
 
-//        players.add(new OSLAPlayer());
+        players.add(new OSLAPlayer());
 //        players.add(new RMHCPlayer());
-        players.add(new HumanGUIPlayer(ac));
+//        players.add(new HumanGUIPlayer(ac));
 //        players.add(new HumanConsolePlayer());
 //        players.add(new FirstActionPlayer());
 

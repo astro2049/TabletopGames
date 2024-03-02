@@ -68,6 +68,17 @@ public class JaipurParameters extends TunableParameters {
 
     public JaipurParameters() {
         super();
+        // you can ignore the goodTokensProgression and bonusTokensAvailable parameters
+        addTunableParameter("nPointsMostCamels", 5, Arrays.asList(0, 2, 5, 7, 10));
+        for (JaipurCard.GoodType gt : goodNCardsMinimumSell.keySet()) {
+            addTunableParameter(gt.name() + "minSell", goodNCardsMinimumSell.get(gt), Arrays.asList(1, 2, 3, 4, 5));
+        }
+        addTunableParameter("nGoodTokensEmptyRoundEnd", 3, Arrays.asList(2, 4, 6));
+        addTunableParameter("nRoundsWinForGameWin", 5, Arrays.asList(1, 2, 3));
+        addTunableParameter("handLimit", 7, Arrays.asList(5, 7, 9));
+        addTunableParameter("nCardsInHandAtStart", 5, Arrays.asList(3, 4, 5));
+        addTunableParameter("marketSize", 5, Arrays.asList(5, 7, 9));
+        addTunableParameter("nCamelsInMarketAtStart", 3, Arrays.asList(1, 2, 3, 4, 5));
     }
 
     // Copy constructor
@@ -85,11 +96,14 @@ public class JaipurParameters extends TunableParameters {
         for (JaipurCard.GoodType gt : jaipurParameters.getGoodTokensProgression().keySet()) {
             this.goodTokensProgression.put(gt, jaipurParameters.getGoodTokensProgression().get(gt).clone());
         }
-        addTunableParameter("nPointsMostCamels", 5, Arrays.asList(0, 2, 5, 7, 10));
-        for (JaipurCard.GoodType gt : goodNCardsMinimumSell.keySet()) {
-            addTunableParameter(gt.name() + " minSell ", goodNCardsMinimumSell.get(gt), Arrays.asList(1, 2, 3, 4, 5));
+        this.handLimit = jaipurParameters.getHandLimit();
+        this.nCardsInHandAtStart = jaipurParameters.getNCardsInHandAtStart();
+        this.marketSize = jaipurParameters.getMarketSize();
+        this.nCamelsInMarketAtStart = jaipurParameters.getNCamelsInMarketAtStart();
+        for (JaipurCard.GoodType gt : jaipurParameters.getDrawDeckCards().keySet()) {
+            this.drawDeckCards.put(gt, jaipurParameters.getDrawDeckCards().get(gt));
         }
-
+        this.useObsidianCards = jaipurParameters.useObsidianCards;
     }
 
     public Map<JaipurCard.GoodType, Integer> getGoodNCardsMinimumSell() {
@@ -139,19 +153,19 @@ public class JaipurParameters extends TunableParameters {
     @Override
     public String toString() {
         return "JaipurParameters{" +
-                "goodNCardsMinimumSell=" + goodNCardsMinimumSell +
-                ", bonusTokensAvailable=" + bonusTokensAvailable +
-                ", nPointsMostCamels=" + nPointsMostCamels +
-                ", nGoodTokensEmptyRoundEnd=" + nGoodTokensEmptyRoundEnd +
-                ", nRoundsWinForGameWin=" + nRoundsWinForGameWin +
-                ", goodTokensProgression=" + goodTokensProgression +
-                ", handLimit=" + handLimit +
-                ", nCardsInHandAtStart=" + nCardsInHandAtStart +
-                ", marketSize=" + marketSize +
-                ", nCamelsInMarketAtStart=" + nCamelsInMarketAtStart +
-                ", drawDeckCards=" + drawDeckCards +
-                ", useObsidianCards=" + useObsidianCards +
-                '}';
+                "\n\tgoodNCardsMinimumSell=" + goodNCardsMinimumSell +
+                "\n\tbonusTokensAvailable=" + bonusTokensAvailable +
+                "\n\tnPointsMostCamels=" + nPointsMostCamels +
+                "\n\tnGoodTokensEmptyRoundEnd=" + nGoodTokensEmptyRoundEnd +
+                "\n\tnRoundsWinForGameWin=" + nRoundsWinForGameWin +
+                "\n\tgoodTokensProgression=" + goodTokensProgression +
+                "\n\thandLimit=" + handLimit +
+                "\n\tnCardsInHandAtStart=" + nCardsInHandAtStart +
+                "\n\tmarketSize=" + marketSize +
+                "\n\tnCamelsInMarketAtStart=" + nCamelsInMarketAtStart +
+                "\n\tdrawDeckCards=" + drawDeckCards +
+                "\n\tuseObsidianCards=" + useObsidianCards +
+                "\n}";
     }
 
     @Override
@@ -169,9 +183,15 @@ public class JaipurParameters extends TunableParameters {
 
     @Override
     public void _reset() {
-        nPointsMostCamels = (int) getParameterValue(" nPointsMostCamels ");
-        goodNCardsMinimumSell.replaceAll((gt, v) -> (Integer) getParameterValue(gt.
-                name() + " minSell "));
+        // you can ignore the goodTokensProgression and bonusTokensAvailable parameters
+        nPointsMostCamels = (int) getParameterValue("nPointsMostCamels");
+        goodNCardsMinimumSell.replaceAll((gt, v) -> (Integer) getParameterValue(gt.name() + "minSell"));
+        nGoodTokensEmptyRoundEnd = (int) getParameterValue("nGoodTokensEmptyRoundEnd");
+        nRoundsWinForGameWin = (int) getParameterValue("nRoundsWinForGameWin");
+        handLimit = (int) getParameterValue("handLimit");
+        nCardsInHandAtStart = (int) getParameterValue("nCardsInHandAtStart");
+        marketSize = (int) getParameterValue("marketSize");
+        nCamelsInMarketAtStart = (int) getParameterValue("nCamelsInMarketAtStart");
     }
 
     @Override
