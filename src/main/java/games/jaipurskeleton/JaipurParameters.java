@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * <p>It should then implement appropriate {@link #_copy()}, {@link #_equals(Object)} and {@link #hashCode()} functions.</p>
  *
- * <p>The class can optionally extend from {@link evaluation.optimisation.TunableParameters} instead, which allows to use
+ * <p>The class can optionally extend from {@link TunableParameters} instead, which allows to use
  * automatic game parameter optimisation tools in the framework.</p>
  */
 public class JaipurParameters extends TunableParameters {
@@ -152,13 +152,16 @@ public class JaipurParameters extends TunableParameters {
 
     @Override
     public String toString() {
+        StringBuilder sb1 = new StringBuilder(), sb2 = new StringBuilder();
+        bonusTokensAvailable.forEach((key, value) -> sb1.append("\n\t\t").append(key).append("=").append(Arrays.toString(value)));
+        goodTokensProgression.forEach((key, value) -> sb2.append("\n\t\t").append(key).append("=").append(Arrays.toString(value)));
         return "JaipurParameters{" +
                 "\n\tgoodNCardsMinimumSell=" + goodNCardsMinimumSell +
-                "\n\tbonusTokensAvailable=" + bonusTokensAvailable +
+                "\n\tbonusTokensAvailable=" + sb1 +
                 "\n\tnPointsMostCamels=" + nPointsMostCamels +
                 "\n\tnGoodTokensEmptyRoundEnd=" + nGoodTokensEmptyRoundEnd +
                 "\n\tnRoundsWinForGameWin=" + nRoundsWinForGameWin +
-                "\n\tgoodTokensProgression=" + goodTokensProgression +
+                "\n\tgoodTokensProgression=" + sb2 +
                 "\n\thandLimit=" + handLimit +
                 "\n\tnCardsInHandAtStart=" + nCardsInHandAtStart +
                 "\n\tmarketSize=" + marketSize +
